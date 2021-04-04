@@ -146,15 +146,20 @@ def deep_rnn_model(input_dim, units, recur_layers, output_dim=29, mode = 'GRU'):
     print(model.summary())
     return model
 
-def bidirectional_rnn_model(input_dim, units, output_dim=29):
+def bidirectional_rnn_model(input_dim, units, output_dim=29, mode = 'GRU'):
     """ Build a bidirectional recurrent network for speech
     """
     # Main acoustic input
     input_data = Input(name='the_input', shape=(None, input_dim))
     # TODO: Add bidirectional recurrent layer
-    bidir_rnn = ...
+    if mode == 'GRU':
+        bidir_rnn = Bidirectional(GRU(units, activation='relu',
+                return_sequences=True, name='rnn'))(input_data)
+    elif mode == 'LSTM':
+        bidir_rnn = Bidirectional(GRU(units, activation='relu',
+                return_sequences=True, name='rnn'))(input_data)
     # TODO: Add a TimeDistributed(Dense(output_dim)) layer
-    time_dense = ...
+    time_dense = TimeDistributed(Dense(output_dim))(bidir_rnn)
     # Add softmax activation layer
     y_pred = Activation('softmax', name='softmax')(time_dense)
     # Specify the model
