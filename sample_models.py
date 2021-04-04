@@ -120,7 +120,7 @@ def deep_rnn_model(input_dim, units, recur_layers, output_dim=29, mode = 'GRU'):
     # Main acoustic input
     input_data = Input(name='the_input', shape=(None, input_dim))
     inputs = [input_data]
-    # TODO: Add recurrent layers, each with batch normalization
+    # Add recurrent layers, each with batch normalization
     for i in range(recur_layers):
         if mode == 'SimpleRNN':
             simp_rnn = SimpleRNN(units, activation='relu',
