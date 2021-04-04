@@ -119,22 +119,21 @@ def deep_rnn_model(input_dim, units, recur_layers, output_dim=29, mode = 'GRU'):
     """
     # Main acoustic input
     input_data = Input(name='the_input', shape=(None, input_dim))
-    
+    inputs = [input_data]
     # TODO: Add recurrent layers, each with batch normalization
     for i in range(recur_layers):
         if mode == 'SimpleRNN':
             simp_rnn = SimpleRNN(units, activation='relu',
-                return_sequences=True, name='rnn_' + str(i))(input_data)
+                return_sequences=True, name='rnn_' + str(i))(inputs[i])
         elif mode == 'GRU':
-            #simp_rnn = GRU(units, activation='relu',
-            #    return_sequences=True, name='rnn_' + str(i))(input_data)
-            globals()['simp_rnn' + str(i)] = GRU(units, activation='relu',
-                return_sequences=True, name='rnn_' + str(i))(input_data)
+            simp_rnn = GRU(units, activation='relu',
+               return_sequences=True, name='rnn_' + str(i))(inputs[i])
         elif mode == 'LSTM':
             simp_rnn = LSTM(units, activation='relu',
-                return_sequences=True, name='rnn_' + str(i))(input_data)
+                return_sequences=True, name='rnn_' + str(i))(inputs[i])
             
-        bn_rnn = BatchNormalization()(globals()['simp_rnn' + str(i)])
+        bn_rnn = BatchNormalization(name = 'bn_rnn_{}'.format(i))(simp_rnn)
+        inputs.append(bn_rnn)
     ...
     # TODO: Add a TimeDistributed(Dense(output_dim)) layer
     time_dense = TimeDistributed(Dense(output_dim))(bn_rnn)
